@@ -25,5 +25,10 @@ def get_fhir_subjects(endpoint="http://fhir.careevolution.com/apitest/fhir/Patie
     client = requests.Session()
     client.headers = {'Accept': 'application/json+fhir'}
     t = client.get('http://fhir.careevolution.com/apitest/fhir/Patient')
-    return []
+    if not t.status_code == 200 :
+        print("Error found retrieving subjects")
+        subjects = []
+    else :
+        subjects = t.json().get("entry")
+    return subjects
 

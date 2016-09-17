@@ -24,7 +24,7 @@
                     <div class="col-md-10">
                         <select class="form-control" id="pick_fhir">
                             {% for patient in fhir_subjects %}
-                                <option value="{{ patient.id }}">{{ patient.id }}</option>
+                                <option value="{{ patient.resource.id }}">{{ patient.resource.name[0].family[0] }}, {{ patient.resource.name[0].given[0] }} </option>
                             {% endfor %}
                         </select>
                     </div>
