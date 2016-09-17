@@ -43,12 +43,18 @@
         </div>
     <div class="panel-footer">
         <div class="btn-group">
-            <button type="button">Import Demographics</button>
-            <button type="button">Import Concomitant Medications</button>
+            <button class="btn btn-default" id="push-demog" type="button">Import Demographics</button>
+            <button class="btn btn-default" id="push-conmed" type="button">Import Concomitant Medications</button>
         </div>
     </div>
 
     </div>
+<!-- jQuery, hosted by google -->
+<script src="{{ url_for('static', filename='js/jquery-3.1.0.min.js') }}"></script>
+<!-- Latest compiled and minified JavaScript -->
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+<script type="application/javascript">
+</script>
 </div>
 </body>
 </html>

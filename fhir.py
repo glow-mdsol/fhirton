@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
+import os
+
 import requests
 
 __author__ = 'glow'
+
+ENDPOINT = "http://fhir.careevolution.com/apitest/fhir/Patient"
+
 
 def get_patient_medications(patient_id):
     """
@@ -18,6 +23,9 @@ def get_patient_demographics(patient_id):
     :param patient_id:
     :return:
     """
+    client = requests.Session()
+    t = client.get('http://fhir.careevolution.com/apitest/fhir/Patient')
+    patient_resource = os.path.join(ENDPOINT, patient_id)
     pass
 
 

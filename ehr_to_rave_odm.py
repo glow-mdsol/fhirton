@@ -1,18 +1,14 @@
 # -*- coding: utf-8 -*-
-import config
 
 __author__ = 'isparks'
 
-from rwslib.builders import *
-from rwslib import RWSConnection
-from rwslib.rws_requests import PostDataRequest, SubjectDatasetRequest
 from datetime import datetime
 from random import choice
 from string import ascii_letters
 
-def get_subject_data(study_uuid, subject_uuid):
-    connection = RWSConnection(config.USERNAME, config.PASSWORD)
-    data = connection.send_request(SubjectDatasetRequest())
+from rwslib import RWSConnection
+from rwslib.builders import *
+from rwslib.rws_requests import PostDataRequest
 
 
 class Folder(object):
