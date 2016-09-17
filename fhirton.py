@@ -1,5 +1,7 @@
 from flask import Flask, abort, request
+from flask import render_template
 
+import appconfig
 from database import StudyParticipant
 from fhir import get_fhir_subjects
 from rave import get_rave_subjects
@@ -13,6 +15,8 @@ app = Flask(__name__)
 def populate():
     fhir_subjects = get_fhir_subjects()
     rave_subjects = get_rave_subjects()
+    return render_template("populate.html", rave_subjects=rave_subjects, fhir_subjects=fhir_subjects,
+                           study_name=appconfig.STUDY)
 
 @app.route('/Patient/<id>', methods=['GET', 'POST'])
 def patient(id=None):
