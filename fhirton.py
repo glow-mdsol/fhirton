@@ -1,42 +1,12 @@
-import requests
-from flask import Flask, request, abort
-from rwslib import RWSConnection
+from flask import Flask, abort, request
 
-import appconfig
 from database import StudyParticipant
+from fhir import get_fhir_subjects
+from rave import get_rave_subjects
 
 app = Flask(__name__)
 
 
-def get_patient_medications(patient_id):
-    """
-    Get the Medications Resource from the FHIR endpoint
-    :param patient_id:
-    :return:
-    """
-    pass
-
-
-def get_patient_demographics(patient_id):
-    """
-    Get the Patient resource from the FHIR endpoint
-    :param patient_id:
-    :return:
-    """
-    pass
-
-
-def get_fhir_subjects(endpoint="http://fhir.careevolution.com/apitest/fhir/Patient"):
-    client = requests.Session()
-    client.headers = {'Accept': 'application/json+fhir'}
-    t = client.get('http://fhir.careevolution.com/apitest/fhir/Patient')
-    return []
-
-
-def get_rave_subjects():
-    client = RWSConnection(username=appconfig.RAVE_USER,
-                           password=appconfig.RAVE_PASSWORD)
-    return []
 
 
 @app.route('/populate')
