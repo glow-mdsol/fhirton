@@ -1,13 +1,25 @@
+import requests
 from flask import Flask, request, abort
 
 from database import StudyParticipant
 
 app = Flask(__name__)
 
-@app.route("/Patient")
-def get_patients():
-    pass
 
+def get_fhir_subjects(endpoint="http://fhir.careevolution.com/apitest/fhir/Patient"):
+    client = requests.Session()
+    client.headers = {'Accept': 'application/json+fhir'}
+    t = client.get('http://fhir.careevolution.com/apitest/fhir/Patient')
+    return []
+
+
+def get_rave_subjects():
+    return []
+
+
+@app.route('/populate')
+def populate():
+    fhir_subjects = get_fhir_subjects()
 
 @app.route('/Patient/<id>', methods=['GET', 'POST'])
 def patient(id=None):
