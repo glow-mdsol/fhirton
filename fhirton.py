@@ -1,9 +1,29 @@
 import requests
 from flask import Flask, request, abort
+from rwslib import RWSConnection
 
+import appconfig
 from database import StudyParticipant
 
 app = Flask(__name__)
+
+
+def get_patient_medications(patient_id):
+    """
+    Get the Medications Resource from the FHIR endpoint
+    :param patient_id:
+    :return:
+    """
+    pass
+
+
+def get_patient_demographics(patient_id):
+    """
+    Get the Patient resource from the FHIR endpoint
+    :param patient_id:
+    :return:
+    """
+    pass
 
 
 def get_fhir_subjects(endpoint="http://fhir.careevolution.com/apitest/fhir/Patient"):
@@ -14,12 +34,15 @@ def get_fhir_subjects(endpoint="http://fhir.careevolution.com/apitest/fhir/Patie
 
 
 def get_rave_subjects():
+    client = RWSConnection(username=appconfig.RAVE_USER,
+                           password=appconfig.RAVE_PASSWORD)
     return []
 
 
 @app.route('/populate')
 def populate():
     fhir_subjects = get_fhir_subjects()
+    rave_subjects = get_rave_subjects()
 
 @app.route('/Patient/<id>', methods=['GET', 'POST'])
 def patient(id=None):
