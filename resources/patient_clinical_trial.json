@@ -1,0 +1,22 @@
+{ // The patient's participation in clinical trials
+    "extension" : [ //  sliced by url  in the specified orderOpen
+      { // National Clinical Trial number // R!
+        // from Element: extension
+        "url" : "NCT", // R!
+        "valueString" : "<string>" // R! Value of extension
+      },
+      { // The period of participation in the clinical trial //
+        // from Element: extension
+        "url" : "period", // R!
+        "valuePeriod" : { Period } // R! Value of extension
+      },
+      { // The reason for participation in the clinical trial //
+        // from Element: extension
+        "url" : "reason", // R!
+        "valueCodeableConcept" : { CodeableConcept } // R! Value of extension
+      }
+      // Would there be interest
+    ],
+    "url" : "http://hl7.org/fhir/StructureDefinition/patient-clinicalTrial", // R!
+// value[x]: Value of extension. One of these 33:
+  }

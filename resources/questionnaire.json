@@ -1,0 +1,69 @@
+{
+  "resourceType" : "Questionnaire",
+  // from Resource: id, meta, implicitRules, and language
+  // from DomainResource: text, contained, extension, and modifierExtension
+  "url" : "<uri>", // Globally unique logical identifier for  questionnaire
+  "identifier" : [{ Identifier }], // External identifiers for this questionnaire
+  "version" : "<string>", // Logical identifier for this version of Questionnaire
+  "status" : "<code>", // R!  draft | published | retired
+  "date" : "<dateTime>", // Date this version was authored
+  "publisher" : "<string>", // Organization/individual who designed the questionnaire
+  "telecom" : [{ ContactPoint }], // Contact information of the publisher
+  "useContext" : [{ CodeableConcept }], // Questionnaire intends to support these contexts
+  "title" : "<string>", // Name for the questionnaire
+  "concept" : [{ Coding }], // Concept that represents the overall questionnaire
+  "subjectType" : ["<code>"], // Resource that can be subject of QuestionnaireResponse
+  "item" : [{ // C? Questions and sections within the Questionnaire
+    "linkId" : "<string>", // To link questionnaire with questionnaire response
+    "concept" : [{ Coding }], // C? Concept that represents this item within in a questionnaire
+    "prefix" : "<string>", // E.g. "1(a)", "2.5.3"
+    "text" : "<string>", // Primary text for the item
+    "type" : "<code>", // R!  group | display | boolean | decimal | integer | date | dateTime +
+    "enableWhen" : [{ // Only allow data when:
+      "question" : "<string>", // R!  Question that determines whether item is enabled
+      "answered" : <boolean>, // C? Enable when answered or not
+      // answer[x]: Value question must have. One of these 13:
+      "answerBoolean" : <boolean>
+      "answerDecimal" : <decimal>
+      "answerInteger" : <integer>
+      "answerDate" : "<date>"
+      "answerDateTime" : "<dateTime>"
+      "answerInstant" : "<instant>"
+      "answerTime" : "<time>"
+      "answerString" : "<string>"
+      "answerUri" : "<uri>"
+      "answerAttachment" : { Attachment }
+      "answerCoding" : { Coding }
+      "answerQuantity" : { Quantity }
+      "answerReference" : { Reference(Any) }
+    }],
+    "required" : <boolean>, // C? Whether the item must be included in data results
+    "repeats" : <boolean>, // C? Whether the item may repeat
+    "readOnly" : <boolean>, // C? Don't allow human editing
+    "maxLength" : <integer>, // C? No more than this many characters
+    "options" : { Reference(ValueSet) }, // C? Valueset containing permitted answers
+    "option" : [{ // C? Permitted answer
+      // value[x]: Answer value. One of these 5:
+      "valueInteger" : <integer>
+      "valueDate" : "<date>"
+      "valueTime" : "<time>"
+      "valueString" : "<string>"
+      "valueCoding" : { Coding }
+    }],
+    // initial[x]: Initial presumed answer for question. One of these 13:
+    "initialBoolean" : <boolean>,
+    "initialDecimal" : <decimal>,
+    "initialInteger" : <integer>,
+    "initialDate" : "<date>",
+    "initialDateTime" : "<dateTime>",
+    "initialInstant" : "<instant>",
+    "initialTime" : "<time>",
+    "initialString" : "<string>",
+    "initialUri" : "<uri>",
+    "initialAttachment" : { Attachment },
+    "initialCoding" : { Coding },
+    "initialQuantity" : { Quantity },
+    "initialReference" : { Reference(Any) },
+    "item" : [{ Content as for Questionnaire.item }] // C? Nested questionnaire items
+  }]
+}

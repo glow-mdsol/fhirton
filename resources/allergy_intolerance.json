@@ -1,0 +1,28 @@
+{
+  "resourceType" : "AllergyIntolerance",
+  // from Resource: id, meta, implicitRules, and language
+  // from DomainResource: text, contained, extension, and modifierExtension
+  "identifier" : [{ Identifier }], // External ids for this item
+  "status" : "<code>", // active | unconfirmed | confirmed | inactive | resolved | refuted | entered-in-error
+  "type" : "<code>", // allergy | intolerance - Underlying mechanism (if known)
+  "category" : "<code>", // food | medication | environment | other - Category of Substance
+  "criticality" : "<code>", // low | high | unable-to-assess
+  "substance" : { CodeableConcept }, // R!  Substance, (or class) considered to be responsible for risk
+  "patient" : { Reference(Patient) }, // R!  Who the sensitivity is for
+  "recordedDate" : "<dateTime>", // When recorded
+  "recorder" : { Reference(Practitioner|Patient) }, // Who recorded the sensitivity
+  "reporter" : { Reference(Patient|RelatedPerson|Practitioner) }, // Source of the information about the allergy
+  "onset" : "<dateTime>", // Date(/time) when manifestations showed
+  "lastOccurence" : "<dateTime>", // Date(/time) of last known occurrence of a reaction
+  "note" : [{ Annotation }], // Additional text not captured in other fields
+  "reaction" : [{ // Adverse Reaction Events linked to exposure to substance
+    "substance" : { CodeableConcept }, // Specific substance considered to be responsible for event
+    "certainty" : "<code>", // unlikely | likely | confirmed - clinical certainty about the specific substance
+    "manifestation" : [{ CodeableConcept }], // R!  Clinical symptoms/signs associated with the Event
+    "description" : "<string>", // Description of the event as a whole
+    "onset" : "<dateTime>", // Date(/time) when manifestations showed
+    "severity" : "<code>", // mild | moderate | severe (of event as a whole)
+    "exposureRoute" : { CodeableConcept }, // How the subject was exposed to the substance
+    "note" : [{ Annotation }] // Text about event not captured in other fields
+  }]
+}

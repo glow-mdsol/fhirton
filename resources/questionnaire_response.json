@@ -1,0 +1,36 @@
+{
+  "resourceType" : "QuestionnaireResponse",
+  // from Resource: id, meta, implicitRules, and language
+  // from DomainResource: text, contained, extension, and modifierExtension
+  "identifier" : { Identifier }, // Unique id for this set of answers
+  "questionnaire" : { Reference(Questionnaire) }, // Form being answered
+  "status" : "<code>", // R!  in-progress | completed | amended
+  "subject" : { Reference(Any) }, // The subject of the questions
+  "author" : { Reference(Device|Practitioner|Patient|RelatedPerson) }, // Person who received and recorded the answers
+  "authored" : "<dateTime>", // Date this version was authored
+  "source" : { Reference(Patient|Practitioner|RelatedPerson) }, // The person who answered the questions
+  "encounter" : { Reference(Encounter) }, // Primary encounter during which the answers were collected
+  "item" : [{ // Groups and questions
+    "linkId" : "<string>", // Corresponding item within Questionnaire
+    "text" : "<string>", // Name for group or question text
+    "subject" : { Reference(Any) }, // The subject this group's answers are about
+    "answer" : [{ // The response(s) to the question
+      // value[x]: Single-valued answer to the question. One of these 13:
+      "valueBoolean" : <boolean>,
+      "valueDecimal" : <decimal>,
+      "valueInteger" : <integer>,
+      "valueDate" : "<date>",
+      "valueDateTime" : "<dateTime>",
+      "valueInstant" : "<instant>",
+      "valueTime" : "<time>",
+      "valueString" : "<string>",
+      "valueUri" : "<uri>",
+      "valueAttachment" : { Attachment },
+      "valueCoding" : { Coding },
+      "valueQuantity" : { Quantity },
+      "valueReference" : { Reference(Any) },
+      "item" : [{ Content as for QuestionnaireResponse.item }] // Nested groups and questions
+    }],
+    "item" : [{ Content as for QuestionnaireResponse.item }] // Nested questionnaire response items
+  }]
+}
