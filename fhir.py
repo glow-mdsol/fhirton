@@ -1,42 +1,53 @@
 # -*- coding: utf-8 -*-
 import os
+import urllib
 
 import requests
 
 __author__ = 'glow'
 
-ENDPOINT = "http://fhir.careevolution.com/apitest/fhir/Patient"
+BASE_URL ="http://fhir.careevolution.com/apitest/fhir"
 
 
-def get_patient_medications(patient_id):
-    """
-    Get the Medications Resource from the FHIR endpoint
-    :param patient_id:
-    :return:
-    """
-    pass
+class FHIRConnection(object):
 
+    def __init__(self, base_url):
+        self.base_url = base_url
+        self._client = requests.Session()
+        self._client.headers = {'Accept': 'application/json+fhir'}
 
-def get_patient_demographics(patient_id):
-    """
-    Get the Patient resource from the FHIR endpoint
-    :param patient_id:
-    :return:
-    """
-    client = requests.Session()
-    t = client.get('http://fhir.careevolution.com/apitest/fhir/Patient')
-    patient_resource = os.path.join(ENDPOINT, patient_id)
-    pass
+    @property
+    def patients(self):
+        patients = []
+        response = self._client.get(os.path.join(self.base_url, 'Patient'))
 
+        while True:
+            patients.extend(response.json().get('entry'))
+            links = dict([(x.get('relation'), x.get('url')) for x in response.json().get('link')])
+            if 'next' in links:
+                response = self._client.get(links.get('next'))
+            else:
+                break
+        return patients
 
-def get_fhir_subjects(endpoint="http://fhir.careevolution.com/apitest/fhir/Patient"):
-    client = requests.Session()
-    client.headers = {'Accept': 'application/json+fhir'}
-    t = client.get('http://fhir.careevolution.com/apitest/fhir/Patient')
-    if not t.status_code == 200 :
-        print("Error found retrieving subjects")
-        subjects = []
-    else :
-        subjects = t.json().get("entry")
-    return subjects
+    def get_patient(self, patient_id):
+        patient = self._client.get(os.path.join(self.base_url, 'Patient', patient_id))
+        if patient.status_code == 404:
+            print("No such patient")
+            return None
+        return patient
+
+    def get_patient_medications(self, patient_id):
+        medications = []
+        params = urllib.parse.urlencode(dict(patient="Patient/{}".format(patient_id)))
+        target = os.path.join(self.base_url, 'MedicationStatement?{}'.format(params))
+        response = self._client.get(target)
+        while True:
+            medications.extend(response.json().get('entry'))
+            links = dict([(x.get('relation'), x.get('url')) for x in response.json().get('link')])
+            if 'next' in links:
+                response = self._client.get(links.get('next'))
+            else:
+                break
+        return medications
 
