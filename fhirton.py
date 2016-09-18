@@ -3,7 +3,7 @@ from flask_socketio import SocketIO
 
 import appconfig
 from fhir import FHIRConnection
-from rave import get_rave_subjects
+from rave import get_rave_subjects, push_demographics, push_conmeds
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '!secret!'
@@ -36,14 +36,13 @@ def initiate_transfer():
         demog = fhir.get_patient(fhir_id)
         if not demog:
             return abort(404)
-        print("Got Patient: %s" % demog.json())
+        result = push_demographics(rave_uuid, demog)
+        return jsonify(dict(status=200))
     elif dataset == 'CM':
         conmeds = fhir.get_patient_medications(fhir_id)
         if not conmeds:
             return abort(404)
-        print("Got Conmeds: %s" % len(conmeds))
-        for idx, conmed in enumerate(conmeds):
-            print("{}: {}".format(idx, conmed))
+        result = push_conmeds(rave_uuid, conmeds)
     return jsonify(dict(status=200))
 
 

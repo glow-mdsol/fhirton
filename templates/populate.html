@@ -34,7 +34,7 @@
                 <div class="col-md-10">
                     <select class="form-control" id="pick_rave">
                         {% for subject in rave_subjects %}
-                            <option value="{{ subject.subjectkey }}">{{ study_name }}
+                            <option value="{{ subject.locationoid }}_{{ subject.subjectkey }}">{{ study_name }}
                                 - {{ subject.subject_name }}</option>
                         {% endfor %}
                     </select>
@@ -60,6 +60,7 @@
                 console.log("Select a Subject");
                 return true;
             }
+            var locationoid = $("#pick_rave").attr('site_oid')
             var fhir_subject = $("#pick_fhir").val();
             if (fhir_subject === "") {
                 console.log("Select a Patient");

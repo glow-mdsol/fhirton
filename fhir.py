@@ -11,8 +11,8 @@ BASE_URL ="http://fhir.careevolution.com/apitest/fhir"
 
 class FHIRConnection(object):
 
-    def __init__(self, base_url):
-        self.base_url = base_url
+    def __init__(self, base_url=None):
+        self.base_url = base_url or BASE_URL
         self._client = requests.Session()
         self._client.headers = {'Accept': 'application/json+fhir'}
 
@@ -35,7 +35,7 @@ class FHIRConnection(object):
         if patient.status_code == 404:
             print("No such patient")
             return None
-        return patient
+        return patient.json()
 
     def get_patient_medications(self, patient_id):
         medications = []
@@ -54,3 +54,6 @@ class FHIRConnection(object):
                 break
         return medications
 
+    def get_medication(self, medication_id):
+        patient = self._client.get(os.path.join(self.base_url, 'Medication', medication_id))
+        pass

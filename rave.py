@@ -117,7 +117,6 @@ def push_conmeds(subject_id, conmeds):
         odm = make_odm(appconfig.STUDY, appconfig.ENV, locationoid, subject_uuid, mapping,
                        retrieved_datetime=datetime.datetime.now(), transfer_user='glow',
                        transfer_identifier=audit_id(), freeze=False)
-        print(odm)
         request = PostDataRequest(str(odm))
         response = client.send_request(request)
 
