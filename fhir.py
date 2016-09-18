@@ -43,6 +43,9 @@ class FHIRConnection(object):
         target = os.path.join(self.base_url, 'MedicationStatement?{}'.format(params))
         response = self._client.get(target)
         while True:
+            content = response.json().get('entry')
+            if content is None:
+                break
             medications.extend(response.json().get('entry'))
             links = dict([(x.get('relation'), x.get('url')) for x in response.json().get('link')])
             if 'next' in links:

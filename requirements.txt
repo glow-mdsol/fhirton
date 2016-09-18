@@ -3,3 +3,4 @@ rwslib
 requests_mauth
 Flask
 Flask-SQLAlchemy
+flask-socketio

@@ -1,23 +1,26 @@
-from flask import Flask, abort, request, jsonify
-from flask import render_template
+from flask import Flask, abort, jsonify, render_template, request
+from flask_socketio import SocketIO
 
 import appconfig
-from database import StudyParticipant
 from fhir import FHIRConnection
 from rave import get_rave_subjects
 
 app = Flask(__name__)
-
-
+app.config['SECRET_KEY'] = '!secret!'
+socketio = SocketIO(app)
 
 
 @app.route('/populate')
 def populate():
-    fhir = FHIRConnection("http://fhir.careevolution.com/apitest/fhir")
+    endpoint = "http://fhir.careevolution.com/apitest/fhir"
+    fhir = FHIRConnection(endpoint)
     fhir_subjects = fhir.patients
     rave_subjects = get_rave_subjects()
-    return render_template("populate.html", rave_subjects=rave_subjects, fhir_subjects=fhir_subjects,
-                           study_name=appconfig.STUDY)
+    return render_template("populate.html",
+                           rave_subjects=rave_subjects,
+                           fhir_subjects=fhir_subjects,
+                           study_name=appconfig.STUDY,
+                           endpoint=endpoint)
 
 
 @app.route("/post", methods=['POST'])
@@ -42,23 +45,6 @@ def initiate_transfer():
         for idx, conmed in enumerate(conmeds):
             print("{}: {}".format(idx, conmed))
     return jsonify(dict(status=200))
-
-# @app.route('/Patient/<id>', methods=['GET', 'POST'])
-# def patient(id=None):
-#     if request.method == "GET":
-#         pass
-#     else:
-#         if request.content_type == 'application/json+fhir' or request.get('_format') == 'application/json+fhir':
-#             content = request.get_json()
-#         elif request.content_type == 'application/xml+fhir' or request.get('_format') == 'application/xml+fhir':
-#             content = request.get_data()
-#         else:
-#             # WHUT?
-#             return abort(400)
-#
-#         subject = StudyParticipant.get_by_uuid(id)
-#         if not subject:
-#             return abort(404)
 
 
 if __name__ == '__main__':
