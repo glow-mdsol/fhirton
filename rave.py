@@ -73,7 +73,7 @@ def push_conmeds(subject_id, conmeds):
     client = RWSConnection(domain=appconfig.RAVE_URL,
                            username=appconfig.RAVE_USER,
                            password=appconfig.RAVE_PASSWORD)
-    for medrx in conmeds[:5]:
+    for medrx in conmeds:
         #print(medrx)
         mapping = []
         resource = medrx.get('resource')

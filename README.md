@@ -1,4 +1,10 @@
+# FHIRTON
+
+This is the code from the HL7 Connectathon September 2016.  Feel free to do as you will with it, ;-)
+
+
 # Use Cases
+Possible Use cases to develop for the connectathon.
 
 ## Study Registration
 * FHIR Gateway advertises Clinical Study Resources
