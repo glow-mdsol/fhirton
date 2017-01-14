@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+
+import urllib
+
 from flask import Flask, abort, jsonify, render_template, request, redirect
 from flask_socketio import SocketIO
 
@@ -11,7 +15,7 @@ socketio = SocketIO(app)
 
 @app.route("/")
 def index():
-    return redirect("/populate")
+    return redirect("/inspect")
 
 
 @app.route('/populate')
@@ -25,11 +29,23 @@ def populate():
                            study_name=appconfig.STUDY,
                            endpoint=appconfig.ENDPOINT)
 
+
 @app.route('/inspect')
-def populate():
-    fhir = FHIRConnection(appconfig.ENDPOINT)
-    fhir_subjects = fhir.patients
-    return render_template("inspect.html")
+def inspect():
+    return render_template("inspect.html",
+                           fhir_servers=appconfig.SERVERS,
+                           domains=appconfig.DOMAINS)
+
+
+@app.route("/url/patients")
+def retrieve_patients():
+    passed_url = request.args.get('url')
+    if not passed_url:
+        return abort(404)
+    target_url = urllib.parse.unquote(passed_url)
+    print("Seeking %s" % target_url)
+    client = FHIRConnection(target_url)
+    return jsonify(client.patients)
 
 
 @app.route("/post", methods=['POST'])

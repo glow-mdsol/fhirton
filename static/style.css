@@ -1,5 +1,5 @@
 body {
-    padding-top: 65px;
+    padding-top: 5px;
 }
 
 .navbar-mdsol {
@@ -10,7 +10,6 @@ body {
 .navbar-mdsol .navbar-text {
     color: #fff;
 }
-
 .table > thead > tr > th {
     background-color: #f5f4f2;
     border-bottom-width: 1px !important;
@@ -118,7 +117,6 @@ span.top-margin {
     vertical-align: top;
 }
 
-
 .formtitle {
     display: inline-block;
     margin-top:6px;
@@ -204,7 +202,6 @@ input[type="checkbox"].form-checkbox {
 .orange {
     color: #ffa500;
 }
-
 .row {
     margin-top: 5px;
 }
