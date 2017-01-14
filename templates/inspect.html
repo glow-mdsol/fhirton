@@ -2,9 +2,165 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Inspect</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap-theme.min.css') }}">
+
+    <!-- Styling -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+<div class="container-fluid">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h2>FHIR Station</h2>
 
+        </div>
+        <div class="panel-body">
+       A Prototype to attempt to quantify the quality of data exposed by FHIR servers, according to Clinical Research Standards.
+        </div>
+    </div>
+    <div id="server_selector" class="panel">
+        <div class="panel-body">
+            <div class="col-lg-2">
+              <label for="pick_fhir">Select Server</label>
+            </div>
+            <div class="col-lg-8">
+                <div class="form-group">
+                    <select class="form-control" id="pick_fhir">
+                        <option value="specify">-- Specify --</option>
+                        {% for server in fhir_servers %}
+                            <option value="{{ server.url }}">
+                            {{ server.url }}
+                            </option>
+                    {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input class="form-control" id="spec_fhir">
+                </div>
+            </div>
+            <div class="col-lg-2">
+                <button id="select_server_fhir" class="btn btn-primary" type="button">Select Server <span class="glyphicon glyphicon-triangle-right" aria-hidden="true"></span></button>
+            </div>
+
+        </div>
+    </div>
+    <div id="patient_selector" class="panel">
+           <div class="panel-body form-group">
+                <label for="pick_subject" class="col-md-2 control-label">Select Subject</label>
+                <div class="col-md-8">
+                    <select class="form-control" id="pick_subject">
+                        <option value="specify">-- Select a Server First --</option>
+                    </select>
+                </div>
+            </div>
+
+    </div>
+    <div id="main_body" class="row">
+        <div class="col-lg-3">
+            <div class="btn-group-vertical">
+                {% for domain in domains %}
+                    {% if domain.mapped == 'yes' %}
+                        <button type="button" class="btn btn-default domain_selected" id="domain_{{ domain.prefix }}">{{ domain.description }}</button>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col-lg-9">
+            <div id="form_control">
+
+            </div>
+        </div>
+    </div>
+</div>
+    <!-- jQuery, hosted by google -->
+    <script src="{{ url_for('static', filename='js/jquery-3.1.0.min.js') }}"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script type="application/javascript">
+        function get_name(resource) {
+            var gender = resource.gender;
+            var nameres = resource.name;
+            var forename;
+            var familyname = "Doe";
+            if (gender === 'male') {
+                forename = "John";
+            } else {
+                forename = "Jane"
+            }
+
+            for (nameid in nameres){
+                var name = nameres[nameid];
+                if (name.hasOwnProperty('text') && name.text !== ""){
+                    // value is set
+                    return name.text;
+                }
+                if (name.family !== ""){
+                    // set the family name
+                    familyname = name.family;
+                }
+                for (_given in name.given){
+                    var given = name.given[_given];
+                    if (given !== ""){
+                        // value is set
+                        forename = given;
+                    }
+                }
+                if (familyname !== "Doe"){
+                    return familyname + ", " + forename;
+                }
+            }
+            return familyname + ", " + forename;
+        }
+
+        function populate_subjects(data) {
+            var patient_list = $("#pick_subject");
+            // remove the patients
+            patient_list.empty();
+            var resource, name;
+            for (patient in data){
+                resource = data[patient].resource;
+                name = get_name(resource);
+                patient_list.append($("<option>", {
+                    value: resource.id,
+                    text: name}));
+            }
+        }
+        $("#select_server_fhir").on("click", function () {
+            var server = $("#pick_fhir");
+            server.removeClass("alert alert-error");
+            var selected_server = server.val();
+            if (selected_server === "specify"){
+                selected_server = $("#spec_fhir").val();
+                if (selected_server === ""){
+                    // not selected
+                    return;
+                }
+            }
+            $.ajax({
+                method: 'GET',
+                url: "/url/patients",
+                data: {url: encodeURI(selected_server)},
+                dataType: 'json'
+            }).done(function (data) {
+                console.log("Retrieved");
+                populate_subjects(data);
+            }).fail(function (data) {
+                console.log("Failed");
+
+            });
+
+        })
+        $(".domain_selected").on("click", function () {
+            var current_domain = this;
+            var subject_selected = $("#pick_subject");
+            if (subject_selected.val() === "specify"){
+                return;
+            }
+        })
+    </script>
 </body>
 </html>
