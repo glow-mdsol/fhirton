@@ -6,13 +6,11 @@ import requests
 
 __author__ = 'glow'
 
-BASE_URL ="http://fhir.careevolution.com/apitest/fhir"
-
 
 class FHIRConnection(object):
 
     def __init__(self, base_url=None):
-        self.base_url = base_url or BASE_URL
+        self.base_url = base_url
         self._client = requests.Session()
         self._client.headers = {'Accept': 'application/json+fhir'}
 

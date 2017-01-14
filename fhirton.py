@@ -1,4 +1,4 @@
-from flask import Flask, abort, jsonify, render_template, request
+from flask import Flask, abort, jsonify, render_template, request, redirect
 from flask_socketio import SocketIO
 
 import appconfig
@@ -9,18 +9,27 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = '!secret!'
 socketio = SocketIO(app)
 
+@app.route("/")
+def index():
+    return redirect("/populate")
+
 
 @app.route('/populate')
 def populate():
-    endpoint = "http://fhir.careevolution.com/apitest/fhir"
-    fhir = FHIRConnection(endpoint)
+    fhir = FHIRConnection(appconfig.ENDPOINT)
     fhir_subjects = fhir.patients
     rave_subjects = get_rave_subjects()
     return render_template("populate.html",
                            rave_subjects=rave_subjects,
                            fhir_subjects=fhir_subjects,
                            study_name=appconfig.STUDY,
-                           endpoint=endpoint)
+                           endpoint=appconfig.ENDPOINT)
+
+@app.route('/inspect')
+def populate():
+    fhir = FHIRConnection(appconfig.ENDPOINT)
+    fhir_subjects = fhir.patients
+    return render_template("inspect.html")
 
 
 @app.route("/post", methods=['POST'])
@@ -31,7 +40,7 @@ def initiate_transfer():
     if None in [rave_uuid, fhir_id, dataset]:
         print("Values: %s" % [rave_uuid, fhir_id, dataset])
         return abort(400)
-    fhir = FHIRConnection("http://fhir.careevolution.com/apitest/fhir")
+    fhir = FHIRConnection(appconfig.ENDPOINT)
     if dataset == 'DM':
         demog = fhir.get_patient(fhir_id)
         if not demog:
