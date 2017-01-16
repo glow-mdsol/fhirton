@@ -50,12 +50,15 @@
     </div>
     <div id="patient_selector" class="panel">
            <div class="panel-body form-group">
-                <label for="pick_subject" class="col-md-2 control-label">Select Subject</label>
+                <label for="pick_patient" class="col-md-2 control-label">Select Subject</label>
                 <div class="col-md-8">
-                    <select class="form-control" id="pick_subject">
+                    <select class="form-control" id="pick_patient">
                         <option value="specify">-- Select a Server First --</option>
                     </select>
                 </div>
+            <div class="col-lg-2">
+                <button id="select_patient_fhir" class="btn btn-primary" type="button">Select Patient <span class="glyphicon glyphicon-triangle-right" aria-hidden="true"></span></button>
+            </div>
             </div>
 
     </div>
@@ -80,6 +83,7 @@
     <script src="{{ url_for('static', filename='js/jquery-3.1.0.min.js') }}"></script>
     <!-- Latest compiled and minified JavaScript -->
     <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/handlebars-v4.0.5.js') }}"></script>
     <script type="application/javascript">
         function get_name(resource) {
             var gender = resource.gender;
@@ -116,21 +120,37 @@
             return familyname + ", " + forename;
         }
 
+        function populate_panel(domain, data) {
+            if (domain !== 'dm'){
+                return
+            }
+            var source = $("#" + domain + "-template").html();
+            var template = Handlebars.compile(source);
+            var target = $("#form_control");
+            target.html(template(data));
+        }
+
         function populate_subjects(data) {
-            var patient_list = $("#pick_subject");
+            var patient_list = $("#pick_patient");
             // remove the patients
             patient_list.empty();
             var resource, name;
             for (patient in data){
-                resource = data[patient].resource;
+                resource = data[patient];
                 name = get_name(resource);
                 patient_list.append($("<option>", {
                     value: resource.id,
                     text: name}));
             }
         }
+
         $("#select_server_fhir").on("click", function () {
             var server = $("#pick_fhir");
+            var patient = $("#pick_patient");
+            patient.empty();
+            patient.append($("<option>", {
+                    value: "specify",
+                    text: "-- Select a Server First --"}));
             server.removeClass("alert alert-error");
             var selected_server = server.val();
             if (selected_server === "specify"){
@@ -153,13 +173,63 @@
 
             });
 
-        })
-        $(".domain_selected").on("click", function () {
-            var current_domain = this;
-            var subject_selected = $("#pick_subject");
-            if (subject_selected.val() === "specify"){
+        });
+        $("#select_patient_fhir").on("click", function () {
+            var server = $("#pick_fhir");
+            var selected_server = server.val();
+            if (selected_server === "specify"){
+                selected_server = $("#spec_fhir").val();
+                if (selected_server === ""){
+                    // not selected
+                    return;
+                }
+            }
+            var patient = $("#pick_patient");
+            var selected_patient = patient.val();
+            if (selected_patient === 'specify'){
+                // no patient specified
                 return;
             }
+            $.ajax({
+                method: 'GET',
+                url: "/url/patients/" + encodeURIComponent(selected_patient),
+                data: {url: encodeURI(selected_server)},
+                dataType: 'json'
+            }).done(function (data) {
+                console.log("Retrieved Patient");
+            }).fail(function (data) {
+                console.log("Failed");
+
+            });
+
+        })
+        $(".domain_selected").on("click", function () {
+            var current_domain = this.id.split('_')[1];
+            var server = $("#pick_fhir");
+            var selected_server = server.val();
+            if (selected_server === "specify"){
+                selected_server = $("#spec_fhir").val();
+                if (selected_server === ""){
+                    // not selected
+                    return;
+                }
+            }
+            var selected_patient = $("#pick_patient");
+            if (selected_patient.val() === "specify"){
+                return;
+            }
+            $.ajax({
+                method: "GET",
+                url: "/url/patients/" + encodeURIComponent(selected_patient) + "/" + current_domain,
+                data: {url: encodeURI(selected_server)},
+                dataType: 'json'
+            }).done(function (data) {
+                console.log("Retrieved Domain");
+                populate_panel(current_domain, data);
+            }).fail(function (data) {
+                console.log("Failed");
+
+            });
         })
     </script>
 </body>
