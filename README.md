@@ -12,13 +12,20 @@ Possible Use cases to develop for the Connectathon.
 * FHIR Gateway advertises Clinical Study Resources
 * EHR system consumes resources
 
-## SDC
-* Questionnaire
-   * Transform Rave ODM into Questionnaire Resource
-* QuestionnaireResponse
-   * Process QuestionnaireResponse Resource and POST to Rave
+## Study Design Model
+### Study Design Model to ResearchStudy
+* Take an ODM-SDM message and generate a [ResearchStudy](https://hl7.org/fhir/researchstudy.html) resource
+### Study Design Model to PlanDefinition
+* Take an ODM-SDM model and generate a [PlanDefinition](https://www.hl7.org/fhir/plandefinition.html)
+* Note: PlanDefinition is independent of a [ResearchSubject](https://hl7.org/fhir/researchsubject.html) and would be ~ the Protocol per ODM
 
-# DAF
+## SDC
+* Form
+   * Transform Form ODM into [Questionnaire](https://www.hl7.org/fhir/questionnaire.html) Resource
+* Form response
+   * Process [QuestionnaireResponse](https://www.hl7.org/fhir/questionnaireresponse.html) Resource into ODM ClinicalData 
+
+## DAF
 * DM
   * POST - Transform DAF-Patient resource into a DM record, Push to Rave
   * GET - Transform DM panel to DAF-patient (will probably be non-compliant?)
@@ -26,7 +33,7 @@ Possible Use cases to develop for the Connectathon.
   * POST - Transform DAF-VitalSigns resource into a VS record, Push to Rave
   * GET - Extract a VS CRF and transform to DAF-vitalsigns
 
-Demographics
+## Demographics
 * DAF-Patient
   * Race => us-core (US Realm)
   * Ethnicity
