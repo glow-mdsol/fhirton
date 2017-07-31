@@ -22,6 +22,10 @@ def index():
 
 @app.route('/populate')
 def populate():
+    """
+    Landing page
+    :return:
+    """
     fhir = FHIRConnection(appconfig.ENDPOINT)
     fhir_subjects = fhir.patients
     rave_subjects = get_rave_subjects()
@@ -41,6 +45,10 @@ def inspect():
 
 @app.route("/url/patients")
 def retrieve_patients():
+    """
+    Get a set of patient resources given a FHIR URL
+    :return:
+    """
     passed_url = request.args.get('url')
     if not passed_url:
         return abort(404)
@@ -56,6 +64,11 @@ def retrieve_patients():
 
 @app.route("/url/patients/<patient_id>")
 def retrieve_patient(patient_id=None):
+    """
+    Get a patient Resource, given a patient id
+    :param patient_id:
+    :return:
+    """
     passed_url = request.args.get('url')
     if not passed_url:
         return abort(404)
@@ -67,8 +80,15 @@ def retrieve_patient(patient_id=None):
     patient = client.get_patient(patient_id=unquote(patient_id))
     return jsonify(patient)
 
+
 @app.route("/url/patients/<patient_id>/<domain>")
 def retrieve_patient_domain(patient_id=None, domain=None):
+    """
+    Get a 'domain' resource for a subject, this is mostly unimplemented
+    :param patient_id:
+    :param domain:
+    :return:
+    """
     passed_url = request.args.get('url')
     if not passed_url:
         return abort(404)
@@ -76,6 +96,7 @@ def retrieve_patient_domain(patient_id=None, domain=None):
     client = FHIRConnection(target_url)
     if not patient_id:
         return abort(404)
+    result = {}
     if domain == 'dm':
         print("Seeking Patient %s at %s" % (patient_id, target_url))
         result = client.get_patient(patient_id=unquote(patient_id))
@@ -84,8 +105,15 @@ def retrieve_patient_domain(patient_id=None, domain=None):
 
 @app.route("/post", methods=['POST'])
 def initiate_transfer():
+    """
+    Push data for a subject, given a fhir_id (Patient identifier)
+    :return:
+    """
+    # UUID for a Rave Subject
     rave_uuid = request.form.get('rave_uuid')
+    # Patient ID on FHIR endpoint
     fhir_id = request.form.get('fhir_id')
+    # Definition of a data set (eg DM, CM)
     dataset = request.form.get('dataset')
     if None in [rave_uuid, fhir_id, dataset]:
         print("Values: %s" % [rave_uuid, fhir_id, dataset])
