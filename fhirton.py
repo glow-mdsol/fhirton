@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import urllib
+from urllib.parse import unquote
 
 from flask import Flask, abort, jsonify, render_template, request, redirect
 from flask_socketio import SocketIO
@@ -43,13 +44,13 @@ def retrieve_patients():
     passed_url = request.args.get('url')
     if not passed_url:
         return abort(404)
-    target_url = urllib.parse.unquote(passed_url).strip()
+    target_url = unquote(passed_url).strip()
     print("Seeking '%s'" % target_url)
     client = FHIRConnection(target_url)
     try:
         return jsonify(client.patients)
     except HTTPError as exc:
-        print("HTTP Error: %s" % exc.response.body)
+        print("HTTP Error: %s" % exc.response.content)
         return abort(exc.response.status_code)
 
 
@@ -58,12 +59,12 @@ def retrieve_patient(patient_id=None):
     passed_url = request.args.get('url')
     if not passed_url:
         return abort(404)
-    target_url = urllib.parse.unquote(passed_url)
+    target_url = unquote(passed_url)
     client = FHIRConnection(target_url)
     if not patient_id:
         return abort(404)
     print("Seeking Patient %s at %s" % (patient_id, target_url))
-    patient = client.get_patient(patient_id=urllib.parse.unquote(patient_id))
+    patient = client.get_patient(patient_id=unquote(patient_id))
     return jsonify(patient)
 
 @app.route("/url/patients/<patient_id>/<domain>")
@@ -71,13 +72,13 @@ def retrieve_patient_domain(patient_id=None, domain=None):
     passed_url = request.args.get('url')
     if not passed_url:
         return abort(404)
-    target_url = urllib.parse.unquote(passed_url)
+    target_url = unquote(passed_url)
     client = FHIRConnection(target_url)
     if not patient_id:
         return abort(404)
     if domain == 'dm':
         print("Seeking Patient %s at %s" % (patient_id, target_url))
-        result = client.get_patient(patient_id=urllib.parse.unquote(patient_id))
+        result = client.get_patient(patient_id=unquote(patient_id))
     return jsonify(result)
 
 
