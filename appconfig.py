@@ -5,6 +5,7 @@ from collections import namedtuple
 
 __author__ = 'glow'
 
+# Configuration Variables for a Rave integration
 RAVE_USER = os.environ.get('RAVE_USERNAME', '')
 RAVE_PASSWORD = os.environ.get('RAVE_PASSWORD', '')
 RAVE_URL = os.getenv('RAVE_URL', 'innovate')
@@ -12,10 +13,12 @@ RAVE_PROJECT = os.environ.get('RAVE_PROJECT', 'EHRTOEDC(DEV)')
 STUDY = os.environ.get('STUDY', 'EHRTOEDC')
 ENV = os.environ.get('ENV', 'DEV')
 
+# Arbitrary Endpoint for Content
 ENDPOINT = "http://fhir3.healthintersections.com.au/open/"
 
 Server = namedtuple('Server', ['url', 'secured','notes'])
 
+# NOTE: These may not all work, need to update as and when necessary
 _servers = """http://fhir3.healthintersections.com.au/open/,no,
 http://wildfhir.aegis.net/fhir1-8-0,no,
 https://api3.hspconsortium.org/fhirconnect14/open,no,

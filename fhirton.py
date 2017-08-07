@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
 import urllib
+from urllib.parse import unquote
 
 from flask import Flask, abort, jsonify, render_template, request, redirect
 from flask_socketio import SocketIO
+from requests import HTTPError
 
 import appconfig
 from fhir import FHIRConnection
@@ -20,6 +22,10 @@ def index():
 
 @app.route('/populate')
 def populate():
+    """
+    Landing page
+    :return:
+    """
     fhir = FHIRConnection(appconfig.ENDPOINT)
     fhir_subjects = fhir.patients
     rave_subjects = get_rave_subjects()
@@ -39,19 +45,75 @@ def inspect():
 
 @app.route("/url/patients")
 def retrieve_patients():
+    """
+    Get a set of patient resources given a FHIR URL
+    :return:
+    """
     passed_url = request.args.get('url')
     if not passed_url:
         return abort(404)
-    target_url = urllib.parse.unquote(passed_url)
-    print("Seeking %s" % target_url)
+    target_url = unquote(passed_url).strip()
+    print("Seeking '%s'" % target_url)
     client = FHIRConnection(target_url)
-    return jsonify(client.patients)
+    try:
+        return jsonify(client.patients)
+    except HTTPError as exc:
+        print("HTTP Error: %s" % exc.response.content)
+        return abort(exc.response.status_code)
+
+
+@app.route("/url/patients/<patient_id>")
+def retrieve_patient(patient_id=None):
+    """
+    Get a patient Resource, given a patient id
+    :param patient_id:
+    :return:
+    """
+    passed_url = request.args.get('url')
+    if not passed_url:
+        return abort(404)
+    target_url = unquote(passed_url)
+    client = FHIRConnection(target_url)
+    if not patient_id:
+        return abort(404)
+    print("Seeking Patient %s at %s" % (patient_id, target_url))
+    patient = client.get_patient(patient_id=unquote(patient_id))
+    return jsonify(patient)
+
+
+@app.route("/url/patients/<patient_id>/<domain>")
+def retrieve_patient_domain(patient_id=None, domain=None):
+    """
+    Get a 'domain' resource for a subject, this is mostly unimplemented
+    :param patient_id:
+    :param domain:
+    :return:
+    """
+    passed_url = request.args.get('url')
+    if not passed_url:
+        return abort(404)
+    target_url = unquote(passed_url)
+    client = FHIRConnection(target_url)
+    if not patient_id:
+        return abort(404)
+    result = {}
+    if domain == 'dm':
+        print("Seeking Patient %s at %s" % (patient_id, target_url))
+        result = client.get_patient(patient_id=unquote(patient_id))
+    return jsonify(result)
 
 
 @app.route("/post", methods=['POST'])
 def initiate_transfer():
+    """
+    Push data for a subject, given a fhir_id (Patient identifier)
+    :return:
+    """
+    # UUID for a Rave Subject
     rave_uuid = request.form.get('rave_uuid')
+    # Patient ID on FHIR endpoint
     fhir_id = request.form.get('fhir_id')
+    # Definition of a data set (eg DM, CM)
     dataset = request.form.get('dataset')
     if None in [rave_uuid, fhir_id, dataset]:
         print("Values: %s" % [rave_uuid, fhir_id, dataset])

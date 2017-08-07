@@ -1,4 +1,4 @@
-fhirclient
+-e git://github.com/smart-on-fhir/client-py.git@develop#egg=fhirclient
 rwslib
 requests_mauth
 Flask
