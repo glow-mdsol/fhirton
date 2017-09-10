@@ -14,7 +14,8 @@ STUDY = os.environ.get('STUDY', 'EHRTOEDC')
 ENV = os.environ.get('ENV', 'DEV')
 
 # Arbitrary Endpoint for Content
-ENDPOINT = "http://fhir3.healthintersections.com.au/open/"
+#ENDPOINT = "http://fhir3.healthintersections.com.au/open/"
+ENDPOINT = "http://localhost:9074/smartstu3/open/"
 
 Server = namedtuple('Server', ['url', 'secured','notes'])
 
