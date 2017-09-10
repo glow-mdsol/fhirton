@@ -24,16 +24,16 @@
                 <div class="col-md-10">
                     <select class="form-control" id="pick_fhir">
                         {% for patient in fhir_subjects %}
-                            <option value="{{ patient.resource.id }}">
-                                {% if patient.resource.name %}
-                                    {{ patient.resource.name[0].family }},
-                                    {% if patient.resource.name[0].given %}
-                                        {{ patient.resource.name[0].given[0] }}
+                            <option value="{{ patient.id }}">
+                                {% if patient.name %}
+                                    {{ patient.name[0].family }},
+                                    {% if patient.name[0].given %}
+                                        {{ patient.name[0].given[0] }}
                                     {% else %}
                                         UNK
                                     {% endif %}
                                 {% else %}
-                                    {{ patient.resource.identifier }}
+                                    {{ patient.identifier }}
                                 {% endif %}
                             </option>
                         {% endfor %}
